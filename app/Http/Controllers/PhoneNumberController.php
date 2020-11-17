@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use App\Phone;
 use Illuminate\Support\MessageBag;
 use Propaganistas\LaravelPhone\PhoneNumber;
+use Spatie\Activitylog\Models\Activity;
 class PhoneNumberController extends Controller
 {
     public function index()
@@ -33,11 +34,24 @@ class PhoneNumberController extends Controller
             'phone.phone' => 'Number Invalide',
             'phone.unique' => 'Already Have',
         ]);
-        Phone::insert([
-            'phone' => $phone,
-            'country_code' => $request->country_code,
-        ]);
-        return $phone;
+
+        // Phone::create([
+        //     'phone' => $phone,
+        //     'country_code' => $request->country_code,
+        // ]);
+
+
+        $phn = Phone::where('phone', '+8801933704177')->first();
+        // $phn = new Phone;
+        $phn->phone = $phone;
+        $phn->country_code = $request->country_code;
+        $phn->save();
+
+
+        // activity()->log('Look mum, I logged something');
+        $activity = Activity::all()->last();
+        // return $phone;
+        return $activity;
         // return back()->with('success','Success');
     }
 }
